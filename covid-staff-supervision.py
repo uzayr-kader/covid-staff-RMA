@@ -176,7 +176,7 @@ for r in range(startRow, endRow):
             else:
                 newWeek.append("")
     print("--------------------")
-    print(staffCode, staffName)
+    print(staffName)
     print("--------------------")
     if (staffCode not in exclStaff):
         for i in range(numOfWeeks * lessonsPerDay * daysPerWeek): # Iterate through the current 1 week of classes for a member of staff
@@ -226,15 +226,16 @@ for r in range(startRow, endRow):
                                         ready = True
                         if (ready):
                             # Now ready to copy 3 letter code into slot:
-                            for b in blocks:
-                                thisBlock = b
+                            alreadyEntered = False # Primary use of checking this is so that KS4 Outside sheet doesn't have repeats
+                            for thisBlock in blocks:
                                 writeWs = writeWb[thisBlock.SheetName]
-                                writeColumn = getColumn(thisWeek, thisDayNum, thisPeriod)
-                                if (writeColumn):
-                                    writeColumn += thisBlock.StartColumn
+                                c = getColumn(thisWeek, thisDayNum, thisPeriod)
+                                if (c):
+                                    c += thisBlock.StartColumn
                                     for r in range(thisBlock.StartRow, thisBlock.EndRow + 1):
-                                        if (writeWs.cell(r, writeColumn).value == None):
-                                            print(staffCode + " to (" + str(r) + ", " + str(writeColumn) + ")")
-                                            writeWs.cell(r, writeColumn).value = staffCode
-                                            writeWb.save(writeLocation)
+                                        if (writeWs.cell(r, c).value == None and not alreadyEntered):
+                                            alreadyEntered = True
+                                            print(staffCode + " to Sheet ["+ thisBlock.SheetName +"] (" + str(r) + ", " + str(c) + ")")
+                                            writeWs.cell(r, c).value = staffCode
                                             break
+writeWb.save(writeLocation)
